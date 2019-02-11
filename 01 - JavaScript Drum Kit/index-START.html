@@ -1,66 +1,103 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>JS Drum Kit</title>
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
+    <head>
+        <meta charset="UTF-8" />
+        <title>JS Drum Kit</title>
+        <link rel="stylesheet" href="style.css" />
+    </head>
+    <body>
+        <div class="keys">
+            <div data-key="65" class="key">
+                <kbd>A</kbd>
+                <span class="sound">clap</span>
+            </div>
+            <div data-key="83" class="key">
+                <kbd>S</kbd>
+                <span class="sound">hihat</span>
+            </div>
+            <div data-key="68" class="key">
+                <kbd>D</kbd>
+                <span class="sound">kick</span>
+            </div>
+            <div data-key="70" class="key">
+                <kbd>F</kbd>
+                <span class="sound">openhat</span>
+            </div>
+            <div data-key="71" class="key">
+                <kbd>G</kbd>
+                <span class="sound">boom</span>
+            </div>
+            <div data-key="72" class="key">
+                <kbd>H</kbd>
+                <span class="sound">ride</span>
+            </div>
+            <div data-key="74" class="key">
+                <kbd>J</kbd>
+                <span class="sound">snare</span>
+            </div>
+            <div data-key="75" class="key">
+                <kbd>K</kbd>
+                <span class="sound">tom</span>
+            </div>
+            <div data-key="76" class="key">
+                <kbd>L</kbd>
+                <span class="sound">tink</span>
+            </div>
+        </div>
 
+        <audio data-key="65" src="sounds/clap.wav"></audio>
+        <audio data-key="83" src="sounds/hihat.wav"></audio>
+        <audio data-key="68" src="sounds/kick.wav"></audio>
+        <audio data-key="70" src="sounds/openhat.wav"></audio>
+        <audio data-key="71" src="sounds/boom.wav"></audio>
+        <audio data-key="72" src="sounds/ride.wav"></audio>
+        <audio data-key="74" src="sounds/snare.wav"></audio>
+        <audio data-key="75" src="sounds/tom.wav"></audio>
+        <audio data-key="76" src="sounds/tink.wav"></audio>
 
-  <div class="keys">
-    <div data-key="65" class="key">
-      <kbd>A</kbd>
-      <span class="sound">clap</span>
-    </div>
-    <div data-key="83" class="key">
-      <kbd>S</kbd>
-      <span class="sound">hihat</span>
-    </div>
-    <div data-key="68" class="key">
-      <kbd>D</kbd>
-      <span class="sound">kick</span>
-    </div>
-    <div data-key="70" class="key">
-      <kbd>F</kbd>
-      <span class="sound">openhat</span>
-    </div>
-    <div data-key="71" class="key">
-      <kbd>G</kbd>
-      <span class="sound">boom</span>
-    </div>
-    <div data-key="72" class="key">
-      <kbd>H</kbd>
-      <span class="sound">ride</span>
-    </div>
-    <div data-key="74" class="key">
-      <kbd>J</kbd>
-      <span class="sound">snare</span>
-    </div>
-    <div data-key="75" class="key">
-      <kbd>K</kbd>
-      <span class="sound">tom</span>
-    </div>
-    <div data-key="76" class="key">
-      <kbd>L</kbd>
-      <span class="sound">tink</span>
-    </div>
-  </div>
+        <script>
+            function playSound(e) {
+                // document.querySelector finds the first element in the document that matches the specified selector OR group of selectors. Read more: https://developer.mozilla.org/en-US/docs/Web/API/Document/querySelector
 
-  <audio data-key="65" src="sounds/clap.wav"></audio>
-  <audio data-key="83" src="sounds/hihat.wav"></audio>
-  <audio data-key="68" src="sounds/kick.wav"></audio>
-  <audio data-key="70" src="sounds/openhat.wav"></audio>
-  <audio data-key="71" src="sounds/boom.wav"></audio>
-  <audio data-key="72" src="sounds/ride.wav"></audio>
-  <audio data-key="74" src="sounds/snare.wav"></audio>
-  <audio data-key="75" src="sounds/tom.wav"></audio>
-  <audio data-key="76" src="sounds/tink.wav"></audio>
+                // Get the audio with the data key from the DOM
+                // the array-looking type thing is called an
+                // "attribute selector" — Also found in CSS
+                const audio = document.querySelector(
+                    `audio[data-key="${e.keyCode}"]`
+                );
 
-<script>
+                // The squery selector works in such a way that:
+                // You can look up by tag, class or id
+                // In this case, we can do div OR .key
+                const key = document.querySelector(
+                    `.key[data-key="${e.keyCode}"]`
+                );
 
-</script>
+                // Audio null?
+                if (!audio) return;
 
+                audio.currentTime = 0; // Allows for audio repetition
+                audio.play();
 
-</body>
+                // Adds a class to the element so it
+                // shows which one is being animated
+                key.classList.add("playing");
+
+                // Use a transitionEnd event to remove the class
+            }
+
+            window.addEventListener("keydown", playSound);
+
+            // Removes the transition class when the transition end event is called
+            function removeTransition(e) {
+                if (e.propertyName !== "transform") return; // Skip if it's not a transform
+                this.classList.remove("playing");
+            }
+
+            const keys = document.querySelectorAll(".key");
+            keys.forEach(key =>
+                key.addEventListener("transitionend", removeTransition)
+            );
+        </script>
+    </body>
 </html>
